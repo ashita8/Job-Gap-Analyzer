@@ -53,7 +53,7 @@ def extract_jd(state: JobAnalyzer) -> JobAnalyzer:
     job_title = state["job_title"]
     years_of_exp = state["yoe"]
     query = f'{job_title} {years_of_exp} jobs site:{state["website"]}'
-    links_response = tavily_client.search(query, search_depth="advanced", max_results=1)
+    links_response = tavily_client.search(query, search_depth="advanced", max_results=5)
     job_urls = [r["url"] for r in links_response["results"]]
 
     extract_response = tavily_client.extract(urls=job_urls, format="text", extract_depth="advanced")
