@@ -4,19 +4,35 @@ from typing import TypedDict, Annotated
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv 
 import os
+import streamlit as st
 
 load_dotenv()
+
+def get_clients():
+    tavily_api_key = st.session_state.get("tavily_api_key")
+    gemini_api_key = st.session_state.get("gemini_api_key")
+
+    if not tavily_api_key or not gemini_api_key:
+        raise ValueError("API keys are not set in session_state")
+
+    tavily_client = TavilyClient(api_key=tavily_api_key)
+    model = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=gemini_api_key)
+
+    return tavily_client, model
+
+
 from tavily import TavilyClient
-tavily_client = TavilyClient(api_key=os.getenv("TAVLIA_API_KEY"))
+#tavily_client = TavilyClient(api_key=st.session_state["tavily_api_key"])
 
 from langchain_google_genai import ChatGoogleGenerativeAI
-model = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=os.getenv("GOOGLE_API_KEY"))
+# model = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=st.session_state["gemini_api_key"])
 
 class JobAnalyzer(TypedDict):
     job_desc : list[str]
     skills : list[str]
     job_title: str
     yoe: int
+    website: str
     high_priority: list[str] 
     medium_priority : list[str] 
     low_priority : list[str]
@@ -32,10 +48,11 @@ class PriorityResponsse(BaseModel):
     low_priority : list[str] = Field(description="This contains low_priority")
 
 def extract_jd(state: JobAnalyzer) -> JobAnalyzer:
+    tavily_client, _ = get_clients()
+
     job_title = state["job_title"]
-    print("hey",state["job_title"])
     years_of_exp = state["yoe"]
-    query = f'{job_title} {years_of_exp} jobs site:indeed.com'
+    query = f'{job_title} {years_of_exp} jobs site:{state["website"]}'
     links_response = tavily_client.search(query, search_depth="advanced", max_results=1)
     job_urls = [r["url"] for r in links_response["results"]]
 
@@ -50,6 +67,7 @@ def extract_jd(state: JobAnalyzer) -> JobAnalyzer:
     return {'job_desc': final_jds }
 
 def extract_skills(state: JobAnalyzer) -> JobAnalyzer:
+    _, model = get_clients()
     structured_op = model.with_structured_output(SkillResponse)
     prompt = f"read the job description and give me key skills {state['job_desc']}"
 
@@ -58,6 +76,7 @@ def extract_skills(state: JobAnalyzer) -> JobAnalyzer:
 
 
 def set_priority(state: JobAnalyzer) -> JobAnalyzer:
+    _, model = get_clients()
     structured_op = model.with_structured_output(PriorityResponsse)
     prompt = f"Read all the skills {state['skills']} provided and Job Descriptions {state['job_desc']}, based on that provide the priority level. "
 

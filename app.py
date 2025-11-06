@@ -1,18 +1,42 @@
 import streamlit as st
 from utils.job_analyzer_workflow import job_analyzer
 
+#********************Utility************************
+
+
+#********************Session State******************
+if "tavily_api_key" not in st.session_state:
+    st.session_state["tavily_api_key"] = None
+
+if "gemini_api_key" not in st.session_state:
+    st.session_state["gemini_api_key"] = None
+
+
+#****************Sidebar**************************
+st.session_state["tavily_api_key"] = st.sidebar.text_input("Tavily API key")
+st.session_state["gemini_api_key"] = st.sidebar.text_input("Gemini API key")
+
+#*****************Main UI***************************
 st.title("Job Analyzer")
 st.set_page_config(layout="wide")
 
 job_title = st.text_input("Job Title")
 experience = st.number_input("Years of Experience")
+site = st.radio(
+    "Select the Website you want to research",
+    ["Indeed", "LinkedIn", "Naukri"],
+    index=None,
+)
 
 if st.button("Start Research"):
+    website = site.lower() + ".com"
     init_state = {
     'job_title' : job_title,
-    'yoe':experience
+    'yoe':experience,
+    'website': website
     }
-    response = job_analyzer.invoke(init_state)
+    with st.spinner("Analyzing job data, please wait..."):
+        response = job_analyzer.invoke(init_state)
 
     cols = st.columns(3)
     with cols[0]:
