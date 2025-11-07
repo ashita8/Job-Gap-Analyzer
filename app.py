@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.job_analyzer_workflow import job_analyzer
+from utils.job_analyzer_graph import build_graph
 
 #********************Utility************************
 
@@ -28,6 +28,11 @@ site = st.radio(
     index=None,
 )
 
+tavily_api_key = st.session_state.get("tavily_api_key")
+gemini_api_key = st.session_state.get("gemini_api_key")
+
+if tavily_api_key and gemini_api_key:
+    job_analyzer = build_graph(tavily_api_key, gemini_api_key)
 if st.button("Start Research"):
     website = site.lower() + ".com"
     init_state = {
@@ -35,6 +40,8 @@ if st.button("Start Research"):
     'yoe':experience,
     'website': website
     }
+    
+
     with st.spinner("Analyzing job data, please wait..."):
         response = job_analyzer.invoke(init_state)
 
