@@ -7,6 +7,7 @@ class JobAnalyzer(TypedDict):
     job_title: str
     yoe: int
     website: str
+    job_listings : int
     high_priority: list[str] 
     medium_priority : list[str] 
     low_priority : list[str]
