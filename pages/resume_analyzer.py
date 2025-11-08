@@ -36,8 +36,9 @@ def render_resume_anlayzer():
                         'jd_skills': st.session_state["job_anlayzer_skills"],
                         'resume_file' : tmp_path,
                     }
-
-                    response = resume_analyzer.invoke(init_state)
+                    with st.spinner("Analyzing job data, please wait..."):
+                        response = resume_analyzer.invoke(init_state)
+                        
                     with st.container(border=True):
                         st.write("Resume Summary")
                         st.write(response["resume_skills_summary"])
