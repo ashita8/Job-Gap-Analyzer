@@ -1,7 +1,6 @@
 import streamlit as st
 from utils.resume_analyzer_graph import build_graph
 import tempfile
-from langchain.document_loaders.pdf import PyPDFLoader
 from sidebar import render_sidebar
 
 st.set_page_config(page_title="", page_icon="📈")
