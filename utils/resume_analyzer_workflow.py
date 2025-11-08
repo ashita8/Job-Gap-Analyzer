@@ -3,7 +3,7 @@ from langgraph.graph import StateGraph, START, END
 from langchain_google_genai import ChatGoogleGenerativeAI
 from typing import TypedDict, Annotated
 from pydantic import BaseModel, Field
-from langchain.document_loaders import PyPDFLoader
+from langchain.document_loaders.pdf import PyPDFLoader
 import tempfile
 import streamlit as st
 from dotenv import load_dotenv 
