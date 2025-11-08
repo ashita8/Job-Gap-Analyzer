@@ -1,8 +1,7 @@
-langchain==0.3.27
-pypdf
+langchain==1.0.5
 langchain_google_genai==3.0.1
 langgraph==1.0.2
-numpy
+numpy==1.21.2
 pydantic==2.12.4
 python-dotenv==1.2.1
 streamlit==1.50.0
