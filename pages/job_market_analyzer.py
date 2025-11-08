@@ -4,7 +4,7 @@ import numpy as np
 from sidebar import render_sidebar
 from utils.job_analyzer_graph import build_graph
 
-st.set_page_config(page_title="Plotting Demo", page_icon="📈")
+st.set_page_config(page_title="Job Market Analyzer", page_icon="📈")
 
 st.title("Job Analyzer")
 st.set_page_config(layout="centered")
@@ -12,7 +12,7 @@ st.set_page_config(layout="centered")
 def show_analyzer():
     job_title = st.text_input("Job Title")
     experience = st.number_input("Years of Experience")
-    Job_listings_count = st.slider("How many Job Listings you want to analyze?", 0, 5, 30)
+    Job_listings_count = st.slider("How many Job Listings you want to analyze?", 0, 5, 20)
     site = st.radio(
         "Select the Website you want to research",
         ["Indeed", "LinkedIn", "Naukri"],
